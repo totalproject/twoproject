@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!--suppress ALL -->
+<mapper namespace="com.first.firstconnect.dao.OrdinaryUserDao">
+    <resultMap id="BaseResultMap" type="com.first.firstconnect.entity.OrdinaryUsers">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="del_bean_base" property="delBeanBase" jdbcType="INTEGER"/>
+        <result column="machine_id" property="machineId" jdbcType="VARCHAR"/>
+        <result column="invitation" property="invitation" jdbcType="INTEGER"/>
+        <result column="group_id" property="groupId" jdbcType="INTEGER"/>
+        <result column="excel_and_txt" property="excelAndTxt" jdbcType="INTEGER"/>
+        <result column="total_beans" property="totalBeans" jdbcType="INTEGER"/>
+        <result column="del_total_beans" property="delTotalBeans" jdbcType="INTEGER"/>
+        <result column="pic_analysis_frequency" property="picAnalysisFrequency" jdbcType="INTEGER"/>
+        <result column="login_authority" property="loginAuthority" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+        <result column="update_time" property="updateTime" jdbcType="VARCHAR"/>
+        <result column="logical_del" property="logicalDel" jdbcType="INTEGER"/>
+        <result column="club_id" property="clubId" jdbcType="VARCHAR"/>
+        <result column="reserved_fields2" property="reservedFields2" jdbcType="VARCHAR"/>
+        <result column="reserved_fields3" property="reservedFields3" jdbcType="VARCHAR"/>
+    </resultMap>
+    <!--总数据-->
+    <sql id="Base_Column_List">
+        id, user_name, state, del_bean_base, machine_id, invitation, group_id,
+    excel_and_txt, total_beans, del_total_beans, pic_analysis_frequency, login_authority,
+    create_time, update_time, logical_del, club_id, reserved_fields2, reserved_fields3
+    </sql>
+    <!--总数据字段-->
+    <sql id="Total_Game_List">
+        vvv.GroupName,vvv.UserName,vvv.UserID, vvv.ShareholderName,vvv.Deduction,vvv.Fraction,vvv.Amount,vvv.ShareholderNub,
+    </sql>
+    <!--总数据显示时使用-->
+    <sql id="Total_Game_List2">
+       vvv.UserName,vvv.UserID, vvv.Fraction, vvv.GroupName
+    </sql>
+    <!--每局游戏信息表,1 4 两张表联合查询-->
+    <sql id="Each_Game_List">
+        v.id as id,v.str1 as userId,v.str2 as score ,
+        v.str3 as photo ,v.str4 as delScore
+        ,v.str6 as timer ,v.str5 as BigWinner
+        ,vvvv.UserName as userName
+    </sql>
+    <!-- -->
+    <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Integer">
+        select user_name,
+               invitation,
+               total_beans
+        from ordinary_users
+        where id = #{id,jdbcType=INTEGER}
+        limit 1
+    </select>
+
+    <!--根据用户名查找用户信息-->
+    <select id="findByName" parameterType="String" resultMap="BaseResultMap">
+        <!--表引用的方法，这空格好怪啊，怎么不能缩进-->
+      select
+      <include refid="Base_Column_List"/>
+      from ordinary_users
+      where user_name = #{username}
+--       and logical_del = 0
+    </select>
+
+    <!--查询游戏总数据-->
+    <select id="findTotalGameData" resultType="com.first.firstconnect.entity.TotalGameData" parameterType="String">
+        select
+        <!--<include refid="Total_Game_List"/>-->
+        vvv.GroupName,vvv.UserName,vvv.UserID, vvv.ShareholderName,vvv.Deduction,vvv.Fraction,vvv.Amount,vvv.ShareholderNub
+        ,vvvv.warningPoints
+        from ${username}_vvv as vvv
+        left join ${username}_vvvv as vvvv
+        on vvv.UserID=vvvv.UserID
+        order by Fraction asc
+    </select>
+    <!--查询总数据里面的每局-->
+    <select id="findAloneUserInfo" parameterType="String" resultType="com.first.firstconnect.entity.EachGameData">
+        select
+        v.id as id,v.str1 as userId,v.str2 as score ,
+        v.str3 as photo ,v.str4 as delScore
+        ,v.str6 as timer ,v.str5 as BigWinner
+        ,vvvv.UserName as userName
+        from yule666_v as v
+        left join yule666_vvvv as vvvv on v.str1 = vvvv.UserID
+        where v.str8!=2 and v.str8!=4 and vvvv.username = '搬砖的'
+        order by timer desc
+    </select>
+
+
+    <!--查询每局比赛-->
+    <select id="findEachGameData" parameterType="String" resultType="com.first.firstconnect.entity.EachGameData">
+        <!--select-->
+        <!--<include refid="Each_Game_List"/>-->
+        <!--,vvv.fraction-->
+        <!--from #{username}_v as v-->
+        <!--left join #{username}_vvvv as vvvv on v.str1 = vvvv.UserId-->
+        <!--left join #{username}_vvv as vvv on vvvv.userName = vvv.userName-->
+        select
+        <include refid="Each_Game_List"/>
+        ,vvv.fraction
+        from ${username}_v as v
+        left join ${username}_vvvv as vvvv on v.str1=vvvv.UserId
+        left join ${username}_vvv as vvv on vvvv.userName=vvv.userName
+        where v.str8!=4
+        order by timer desc
+        <!--不能使用#而要使用$符号-->
+    </select>
+
+
+
+
+
+</mapper>

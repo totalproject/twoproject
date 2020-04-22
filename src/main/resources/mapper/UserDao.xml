@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.firstconnect.dao.UserDao">
+
+    <resultMap type="com.first.firstconnect.entity.User" id="UserMap">
+        <id column="id" property="id" jdbcType="INTEGER"/>
+        <result column="user_name" property="userName" jdbcType="VARCHAR"/>
+        <result column="user_password" property="userPassword" jdbcType="VARCHAR"/>
+        <result column="user_type" property="userType" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" jdbcType="VARCHAR"/>
+    </resultMap>
+    <sql id="Base_Column_List">
+    id, user_name, user_password, user_type, create_time
+    </sql>
+    <!-- 通过账号密码查找用户-->
+    <select id="loginByUsernameAndPassword" resultMap="UserMap" parameterType="map">
+        select
+        <include refid="Base_Column_List"/>
+        from user_summary
+        where user_name=#{username}
+        and user_password = #{password}
+    </select>
+    <!--通过用户名查找用户信息-->
+    <select id="findByName" parameterType="string" resultMap="UserMap">
+        select
+        <include refid="Base_Column_List"/>
+        from user_summary where user_name=#{username}
+    </select>
+
+</mapper>

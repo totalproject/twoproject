@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.first.firstconnect.dao.SubAccountDao">
+    <resultMap id="BaseResultMap" type="com.first.firstconnect.entity.SubAccount">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="userName"/>
+        <result column="user_password" jdbcType="VARCHAR" property="userPassword"/>
+        <result column="main_account_name" jdbcType="VARCHAR" property="mainAccountName"/>
+        <result column="del_total_beans" jdbcType="INTEGER" property="delTotalBeans"/>
+        <result column="machine_id" jdbcType="VARCHAR" property="machineId"/>
+        <result column="excel_and_txt" jdbcType="INTEGER" property="excelAndTxt"/>
+        <result column="create_time" jdbcType="VARCHAR" property="createTime"/>
+        <result column="update_time" jdbcType="VARCHAR" property="updateTime"/>
+    </resultMap>
+    <!--总信息-->
+    <sql id="Base_Column_List">
+        id, user_name, user_password, main_account_name, del_total_beans, machine_id, excel_and_txt,
+    create_time, update_time
+    </sql>
+    <!--通过username查找子账号表(sub_summary)里面的数据 resultMap="BaseResultMap"-->
+    <select id="findByName" parameterType="String" resultMap="BaseResultMap">
+        select
+        <include refid="Base_Column_List"/>
+        from sub_account
+        where user_name = #{username}
+    </select>
+
+</mapper>

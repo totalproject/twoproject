@@ -1,0 +1,11 @@
+server:
+  port: 8082
+spring:
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://192.168.7.253:3306/xyjfq?useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai
+    username: xy
+    password: xy
+mybatis:
+  mapper-locations: classpath:mapper/*.xml
+  type-aliases-package: com.first.firstconnect.entity
